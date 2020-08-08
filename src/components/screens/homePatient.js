@@ -6,6 +6,22 @@ import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import Header from "../common/header";
 import { NavigationActions } from "@react-navigation/native";
+import * as firebase from 'firebase';
+import { v4 as uuidv4 } from 'uuid';
+
+var firebaseConfig = {
+  apiKey: "AIzaSyBsOhUnlv5KXiFg3rc3rIIAdwIbAciUdjo",
+  authDomain: "skin-cancer-detection-ap-e2397.firebaseapp.com",
+  databaseURL: "https://skin-cancer-detection-ap-e2397.firebaseio.com",
+  projectId: "skin-cancer-detection-ap-e2397",
+  storageBucket: "skin-cancer-detection-ap-e2397.appspot.com",
+  messagingSenderId: "231959586751",
+  appId: "1:231959586751:web:600edecbcffc177de9e30a",
+  measurementId: "G-N2YPK2XFJ2"
+};
+
+firebase.initializeApp(firebaseConfig);
+
 export default class HomePatient extends React.Component {
   constructor(props){
     super()
@@ -58,6 +74,17 @@ export default class HomePatient extends React.Component {
       { cancelable: false }
     );
   };
+
+  upload = async () => {
+     const fileExtension = this.state.image.split('.').pop();
+     var uuid = uuidv4();
+     const fileName = `${uuid}.${fileExtension}`;
+    const response = await fetch(this.state.image);
+    const blob = await response.blob();
+    var ref = firebase.storage().ref().child("my-image/" + fileName);
+    return ref.put(blob);
+} ;  
+
   render() {
     
     return (
@@ -82,7 +109,7 @@ export default class HomePatient extends React.Component {
           size={45}
           color='#5E72E4'
           style={styles.predict}
-          
+          onPress={this.upload}
         />
       </View>
     );
